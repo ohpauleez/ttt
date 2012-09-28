@@ -1,0 +1,46 @@
+# AVUnit related
+/resources/uberstrap/css/style.min.css.gz
+
+# Java related
+pom.xml
+*jar
+*.class
+
+# Leiningen
+/classes
+/lib
+/native
+/checkouts
+/target
+.lein-deps-sum
+.lein-failures
+.lein-cljsbuild-repl
+.lein-plugins
+/.lein-plugins
+
+# Python
+*.pyc
+*.pyo
+/__pycache__/
+
+# Ruby
+Gemfile.lock
+
+# Temp Files
+*.orig
+*~
+.*.swp
+.*.swo
+*.tmp
+*.bak
+
+# OS X
+.DS_Store
+
+# Logging
+*.log
+
+# Docs
+#/autodoc
+#/docs
+
