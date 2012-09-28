@@ -1,0 +1,108 @@
+Here's the idea, `git ttt`
+===========================
+
+A simple issue tracking system built into the standard git workflow with git hooks.
+All extra functionality happens with plugins.
+
+*It's a git-backed text-based ticket tracker* - `git ttt`
+
+### Simplest usage
+To open a ticket
+     git ttt -m"This is something we need to do" --type=work --release=0.1 --points=5
+     git ttt -m"Here's the description of another tictet" -t work -r 0.1 -p 5
+
+To contribute to a ticket
+     git commit -m"Getting closer to solving the first thing [#1]"
+
+To update a ticket
+     git ttt #1 -r 0.2
+
+To create a sub (or referencing) ticket
+     git ttt -m"One more ticket" --sub=1
+     git ttt #3 -s2      # Now this is a sub-ticket for ticket #2 
+
+To close a ticket
+     git commit -m"Fixed the first thing [fixes #1]"
+
+To see an overview of your tickets
+     git ttt st
+     git ttt status
+
+To see an overview of all your releases
+     git ttt st -r
+
+To see ALL tickets
+     git ttt st -a
+
+To search for tickets
+     git ttt [?x :where [?x :owner "paul"]]     # or maybe Python list-comp style? [x if x.owner=="paul"]
+     git ttt [?x :owner "paul"]                 # x.owner=="paul"
+     git ttt [?x :point #"[0-2]H"]              # High impact tickets with 0-2 effort - x.point==r"[0-2]H"
+
+
+### Notes:
+ * When a release's tickets are all closed, a tag is created
+ * Types are configurable in a file, along with the default type
+ * Point scales are configurable in a file, along with the default
+ * Point scales can be any list.  For example Fibonacci effort and project impact together `[0L 0M 0H 1L 1M ... 8L 8M 8H]`
+ * Points internally are captured as unicode strings
+ * Ticket states are configurable in a file
+ * The config file is in the repo, in EDN format`.ttt/.tttrc`
+ * Tickets with contributed work are toggled "in-process"
+ * Tickets do not have to belong to a release
+ * Tickets that reference a release will result in an error being thrown
+ * Tickets are owned by the last person who touches them (unless a pluging changes that behavior)
+ * Everything in the data structure is timestamped with Unix Time // UTC
+ * Releases are in the data structure (an EDN file, `.ttt/data.edn`)
+ * Releases are created with tickets via the `--release*=` or `-RR` option
+ * Releases can be merged or made into "subprojects" if their `:name` points to another release keyword
+ * Releases are deleted by editing the data file directly;  If a ticket is closed and its release is not there, it is ignored.
+ * Releases should be treated like epics
+ * All other functionality is added by plugins (the base system is built upon the same foundation as plugins)
+ * Plugins are stored in `.ttt/plugins/` and toggled in the config file `.ttt/.tttrc`
+ * Plugins are free to register new commands/options
+ * Install involves referencing the ttt script in your ~/.gitconfig
+ * Alternatively, `ttt` script can be copied to a repo and used directly (without the `git ...` prefix)
+ * ttt will modify your repo's githooks as needed
+ * ttt is initialized with the first use of the `git ttt` command
+ * ttt can be removed from a repo with `git ttt destroy`
+
+
+### The proposed data structure
+```clojure
+{
+    :releases {
+        :0.1 {:name "0.1", :created TIMESTAMP, :completed nil}
+        :0.1-mistake {:name :0.1 :created TIMESTAMP, :completed nil
+    }
+    :tickets {
+        :1 {
+            :summary "This is something we need to do"
+            :description ""
+            :reported-by "email from .gitconfig"
+            :owner "email from .gitconfig"
+            :closed-by "email from .gitconfig"
+            :point "5"
+            :states {:open TIMESTAMP
+                     :in-progress TIMESTAMP
+                     :closed TIMESTAMP
+            }
+            :state :open
+            :history [
+                { :commit "git hash"
+                  :at TIMESTAMP
+                },
+            ]
+            :subs [:3]
+            :branch "branch name of the last in-progress commit"
+            :release :0.1
+        }
+    }
+}
+```
+
+Plugins
+---------
+
+### TODO - see mindmap
+
