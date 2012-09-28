@@ -40,6 +40,7 @@ To see ALL tickets
 
 To search for tickets
      git ttt 'release-0.[1-2]'                    # Find any ticket that has anything matching the regular expression string
+     git ttt 'release-0.[1-2]' -c                 # Same as above but also include all commit messages associated with tickets
      git ttt '[?x :where [?x :owner "paul"]]'     # or maybe Python list-comp style? [x if x.owner=="paul"]
      git ttt '[?x :owner "paul"]'                 # x.owner=="paul"
      git ttt '[?x :point #"[0-2]H"]'              # High impact tickets with 0-2 effort - x.point==r"[0-2]H"
