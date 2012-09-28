@@ -141,3 +141,11 @@ Quick notes: The plugins can be written in any language, but need to read in fro
 
 ttt itself is the public API: `ttt __base__ function-name` will return the output of the function
 
+
+License
+--------
+Copyright © 2012 Paul deGrandis
+
+Distributed under the Eclipse Public License, the same as Clojure.
+Please see the `LICENSE_epl.html` for details.
+
