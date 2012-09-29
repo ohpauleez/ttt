@@ -1,0 +1,2 @@
+cljsc-paul src/ttt "{:optimizations :advanced, :pretty-print false, :output-to \"build/ttt\", :output-dir \"build/cljs\", :target :nodejs}"
+chmod +x build/ttt
