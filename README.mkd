@@ -15,18 +15,18 @@ To contribute to a ticket
      git commit -m"Getting closer to solving the first thing [#1]"
 
 To view a ticket's current info
-    git ttt #1
+    git ttt :1
 
 To update a ticket
-     git ttt #1 -r 0.2
+     git ttt :1 -r 0.2
 
 To create a sub (or referencing) ticket
      git ttt -m"One more ticket" --sub=1
-     git ttt #3 -s2      # Now this is a sub-ticket for ticket #2 
+     git ttt :3 -s2      # Now this is a sub-ticket for ticket #2
 
 To close a ticket
-     git commit -m"Fixed the first thing [fixes #1]"
-     git commit -m"Fixed the other thing [fixes #2 #3]"
+     git commit -m"Fixed the first thing [fixes :1]"
+     git commit -m"Fixed the other thing [fixes :2 :3]"
 
 To see an overview of your tickets
      git ttt st
@@ -47,14 +47,14 @@ To search for tickets
 
 
 ### Notes:
- * When a release's tickets are all closed, a tag is created
+ * When a release's tickets are all closed, a tag is created.  This can be toggled off in the configuration file.
  * Types are configurable in a file, along with the default type
  * Point scales are configurable in a file, along with the default
  * Point scales can be any list.  For example Fibonacci effort and project impact together `[0L 0M 0H 1L 1M ... 8L 8M 8H]`
  * Points internally are captured as unicode strings
  * Ticket states are configurable in a file
- * The config file is in the repo, in EDN format`.ttt/.tttrc`
- * Tickets with contributed work are toggled "in-process"
+ * The config file is in the repo, in EDN format`.ttt/tttrc`
+ * Tickets with contributed work are toggled "in-process" (or whatever state follows open)
  * Tickets do not have to belong to a release
  * Tickets that reference a release will result in an error being thrown
  * Tickets are owned by the last person who touches them (unless a pluging changes that behavior)
@@ -81,48 +81,56 @@ To search for tickets
         :0.1 {:name "0.1", :created TIMESTAMP, :completed nil}
         :0.1-mistake {:name :0.1 :created TIMESTAMP, :completed nil
     }
-    :tickets {
-        :1 {
-            :summary "This is something we need to do"
-            :description ""
-            :reported-by "email from .gitconfig"
-            :owner "email from .gitconfig"
-            :closed-by "email from .gitconfig"
-            :point "5"
-            :states {:open TIMESTAMP
-                     :in-progress TIMESTAMP
-                     :closed TIMESTAMP
-            }
-            :state :open
-            :history [
-                { :commit "git hash"
-                  :at TIMESTAMP
-                },
-            ]
-            :subs [:3]
-            :branch "branch name of the last in-progress commit"
-            :release :0.1
+    :tickets [
+        {:id :1
+         :summary "This is something we need to do"
+         :description ""
+         :reported-by "email from .gitconfig"
+         :owner "email from .gitconfig"
+         :closed-by "email from .gitconfig"
+         :points "5"
+         :type "work"
+         :states {:open TIMESTAMP
+                  :in-progress TIMESTAMP
+                  :closed TIMESTAMP
+         }
+         :current-state :open
+         :history [
+             { :commit "git hash"
+               :at TIMESTAMP
+             },
+         ]
+         :subs [:3]
+         :branch "branch name of the last in-progress commit"
+         :release :0.1
         }
-    }
+    ]
 }
 ```
 
 ### Requirements
 ttt needs `node` to be installed.
 
+To install for *ALL* git projects, save the `ttt` file somewhere (preferably on your path) and then:
+
+     git config --global alias.ttt '!/full/path/to/ttt'
+
+To install it for just a single project, just check the `ttt` file into your repo and call it directly:
+
+    `./ttt -m"Making a new ticket"`
 
 Plugins
 ---------
 ### Project, team, and git metrics
 TODO
 
-### Ticket State Hooks
+### Ticket state hooks
 TODO
 
-### Saved Searches
+### Saved aearches
 TODO - just adds a new map to the data structure `{:searches { "email from .gitconfig" {:tag "query", ...}}}`
 
-### Document/Report Generation
+### Document/Report generation
 TODO - should generate Markdown and HTML
 
 ### Ticket priorities
@@ -134,9 +142,21 @@ Searching through ttt
 Searching is powered by core.logic.
 
 
+Questions
+----------
+### Wait...  won't there be conflicts all the time?
+If you commit early and often, there will rarely be conflicts.  ttt encourages you to do the right thing and helps reinforce best practices.
+If a conflict does happen, just `git ttt resolve` - this will reorder the conflicting tickets based on timestamps and update all the ticket numbers.
+
+You're also free to fix conflicts by hand (which just involves renumbering the tickets), submit a patch to make `resolve` better, or write a plugin. 
+
+### Why are the tickets in a vector and not in a map?
+The logical keys for map-based tickets would be `:1, :2, :3` - but if you're numerically indexing something, you're better off just using a vector.
+Internally, tickets know their own position within the list via the `:id` key.
+
 Extending ttt; writing plugins
 --------------------------------
-### The `__base__` API
+### The `__core__` API
 Quick notes: The plugins can be written in any language, but need to read in from stdin and push to stdout.
 
 ttt itself is the public API: `ttt __base__ function-name` will return the output of the function
