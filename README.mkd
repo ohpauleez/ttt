@@ -12,7 +12,7 @@ To open a ticket
      git ttt -m"Here's the description of another tictet" -t work -r 0.1 -p 5
 
 To contribute to a ticket
-     git commit -m"Getting closer to solving the first thing [#1]"
+     git commit -m"Getting closer to solving the first thing [:1]"
 
 To view a ticket's current info
     git ttt :1
@@ -21,12 +21,12 @@ To update a ticket
      git ttt :1 -r 0.2
 
 To create a sub (or referencing) ticket
-     git ttt -m"One more ticket" --sub=1
+     git ttt -m"One more ticket" --sub=1 -t work -r 0.1 -p 5
      git ttt :3 -s2      # Now this is a sub-ticket for ticket #2
 
 To close a ticket
-     git commit -m"Fixed the first thing [fixes :1]"
-     git commit -m"Fixed the other thing [fixes :2 :3]"
+     git commit -m"Fixed the first thing [close :1]"
+     git commit -m"Fixed the other thing [close :2 :3]"
 
 To see an overview of your tickets
      git ttt st
@@ -55,6 +55,8 @@ To search for tickets
  * Ticket states are configurable in a file
  * The config file is in the repo, in EDN format`.ttt/tttrc`
  * Tickets with contributed work are toggled "in-process" (or whatever state follows open)
+ * Tickets can be moved into new states using commit messages: `Example commit message [custom-state :5]`
+ * Tickets can have commits/work attributed to them, just listing them in the commit message: `Example commit message [:6 :7]`
  * Tickets do not have to belong to a release
  * Tickets that reference a release will result in an error being thrown
  * Tickets are owned by the last person who touches them (unless a pluging changes that behavior)
@@ -82,8 +84,8 @@ To search for tickets
         :0.1-mistake {:name :0.1 :created TIMESTAMP, :completed nil
     }
     :tickets [
-        {:id :1
-         :summary "This is something we need to do"
+        {:id :3
+         :summary "One more ticket"
          :description ""
          :reported-by "email from .gitconfig"
          :owner "email from .gitconfig"
@@ -100,7 +102,7 @@ To search for tickets
                :at TIMESTAMP
              },
          ]
-         :subs [:3]
+         :sub :2
          :branch "branch name of the last in-progress commit"
          :release :0.1
         }
@@ -113,9 +115,10 @@ ttt needs `node` to be installed.
 
 To install for *ALL* git projects, save the `ttt` file somewhere (preferably on your path) and then:
 
-     git config --global alias.ttt '!/full/path/to/ttt'
+     git config --global --add alias.root '!pwd -P'
+     git config --global --add alias.ttt '!/full/path/to/ttt'
 
-To install it for just a single project, just check the `ttt` file into your repo and call it directly:
+To install it for just a single project, just add the root alias, check the `ttt` file into your repo, and call it directly:
 
     `./ttt -m"Making a new ticket"`
 
@@ -148,18 +151,27 @@ Questions
 If you commit early and often, there will rarely be conflicts.  ttt encourages you to do the right thing and helps reinforce best practices.
 If a conflict does happen, just `git ttt resolve` - this will reorder the conflicting tickets based on timestamps and update all the ticket numbers.
 
-You're also free to fix conflicts by hand (which just involves renumbering the tickets), submit a patch to make `resolve` better, or write a plugin. 
+You're also free to fix conflicts by hand (which just involves renumbering the tickets), submit a patch to make `resolve` better, or write a plugin.
 
 ### Why are the tickets in a vector and not in a map?
 The logical keys for map-based tickets would be `:1, :2, :3` - but if you're numerically indexing something, you're better off just using a vector.
 Internally, tickets know their own position within the list via the `:id` key.
+
+### How does `ttt` handle concurrent ticket updates?
+A lock file is used to ensure that only one edit can happen at a time.  When the lock file is present, ttt quits and notifies the user.
+If the lock file is mistakenly there, you can just `rm .tttlock`
+
+### Why aren't ticket IDs proper keywords?
+There's currently a bug in the ClojureScript reader that prevents it from reading keywords where the leading character is an integer.
+To manuver around this, the current choice is to make all IDs integers.  In the future, this may change, but all calling semantics will be the same.
+
 
 Extending ttt; writing plugins
 --------------------------------
 ### The `__core__` API
 Quick notes: The plugins can be written in any language, but need to read in from stdin and push to stdout.
 
-ttt itself is the public API: `ttt __base__ function-name` will return the output of the function
+ttt itself is the public API: `ttt __core__ function-name` will return the output of the function
 
 
 License
