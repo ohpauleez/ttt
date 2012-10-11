@@ -8,11 +8,11 @@ All extra functionality happens with plugins.
 
 ### Simplest usage
 To open a ticket
-     git ttt -m"This is something we need to do" --type=work --release=0.1 --points=5
-     git ttt -m"Here's the description of another tictet" -t work -r 0.1 -p 5
+     git ttt -m "This is something we need to do" --type=work --release=0.1 --points=5
+     git ttt -m "Here's the description of another tictet" -t work -r 0.1 -p 5
 
 To contribute to a ticket
-     git commit -m"Getting closer to solving the first thing [:1]"
+     git commit -m "Getting closer to solving the first thing [:1]"
 
 To view a ticket's current info
     git ttt :1
@@ -21,12 +21,12 @@ To update a ticket
      git ttt :1 -r 0.2
 
 To create a sub (or referencing) ticket
-     git ttt -m"One more ticket" --sub=1 -t work -r 0.1 -p 5
+     git ttt -m "One more ticket" --sub=1 -t work -r 0.1 -p 5
      git ttt :3 -s2      # Now this is a sub-ticket for ticket #2
 
 To close a ticket
-     git commit -m"Fixed the first thing [closed :1]"
-     git commit -m"Fixed the other thing [closed :2 :3]"
+     git commit -m "Fixed the first thing [closed :1]"
+     git commit -m "Fixed the other thing [closed :2 :3]"
 
 To see an overview of your tickets
      git ttt st
@@ -126,7 +126,7 @@ And set your local post-commit git hook to:
 
 To test ttt on a single project, just add the root alias, check the `ttt` file into your repo, and call it directly:
 
-     `./ttt -m"Making a new ticket"`
+     `./ttt -m "Making a new ticket"`
 
 And set your local post-commit git hook to:
 
