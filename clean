@@ -1,2 +1,2 @@
-rm -r .ttt tickets.edn build
+rm -r build
 
