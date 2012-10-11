@@ -351,12 +351,12 @@
       ticket)))
 
 (defn parse-git-message [message-str]
-  (let [hook-str (re-find #"\[.+]$" message-str)
-        hook-sans-br (cstr/replace hook-str #"\[|\]" "")
-        parts (cstr/split hook-sans-br #"\s")
-        command (first parts) ;; Note, this could not be a command, but just the mention of a ticket
-        ticket-ids (map id-str->int (filter #(= \:  (get % 0)) parts))]
-    {:ids ticket-ids :maybe-command command :message message-str}))
+  (if-let [hook-str (re-find #"\[.+]$" message-str)]
+    (let [hook-sans-br (cstr/replace hook-str #"\[|\]" "")
+          parts (cstr/split hook-sans-br #"\s")
+          command (first parts) ;; Note, this could not be a command, but just the mention of a ticket
+          ticket-ids (map id-str->int (filter #(= \:  (get % 0)) parts))]
+      {:ids ticket-ids :maybe-command command :message message-str})))
 
 (defn process-git [git-hash email & message-pieces]
   (let [message-map (parse-git-message (cstr/join " " message-pieces))
