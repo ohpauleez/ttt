@@ -25,8 +25,8 @@ To create a sub (or referencing) ticket
      git ttt :3 -s2      # Now this is a sub-ticket for ticket #2
 
 To close a ticket
-     git commit -m"Fixed the first thing [close :1]"
-     git commit -m"Fixed the other thing [close :2 :3]"
+     git commit -m"Fixed the first thing [closed :1]"
+     git commit -m"Fixed the other thing [closed :2 :3]"
 
 To see an overview of your tickets
      git ttt st
