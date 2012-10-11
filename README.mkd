@@ -110,7 +110,7 @@ To search for tickets
 }
 ```
 
-### Requirements
+### Requirements and installation
 ttt needs `node` to be installed.
 
 To install for *ALL* git projects, save the `ttt` file somewhere (preferably on your path) and then:
@@ -118,9 +118,19 @@ To install for *ALL* git projects, save the `ttt` file somewhere (preferably on 
      git config --global --add alias.root '!pwd -P'
      git config --global --add alias.ttt '!/full/path/to/ttt'
 
-To install it for just a single project, just add the root alias, check the `ttt` file into your repo, and call it directly:
+And set your local post-commit git hook to:
 
-    `./ttt -m"Making a new ticket"`
+     git ttt __core__ process-git `git log -n1 --pretty=format:"%H %ae %s"` 
+
+- - -
+
+To test ttt on a single project, just add the root alias, check the `ttt` file into your repo, and call it directly:
+
+     `./ttt -m"Making a new ticket"`
+
+And set your local post-commit git hook to:
+
+     `git root`/ttt __core__ process-git `git log -n1 --pretty=format:"%H %ae %s"` 
 
 Plugins
 ---------
