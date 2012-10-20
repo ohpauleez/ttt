@@ -15,7 +15,7 @@ To contribute to a ticket
      git commit -m "Getting closer to solving the first thing [:1]"
 
 To view a ticket's current info
-    git ttt :1
+     git ttt :1
 
 To update a ticket
      git ttt :1 -r 0.2
