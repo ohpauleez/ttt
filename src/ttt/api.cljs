@@ -9,7 +9,8 @@
 ;;       (let [[fn-str & args] cmd-args]
 ;;         (apply (ns-resolve tttc (symbol fn-str)) args)))
 
-; Instead we rely upon an `exports` like system and use a dispatch table
+; Instead we rely upon a closed `exports` like system and use a dispatch table
+; TODO: this system has to be open to extension to appropriately support plugins
 (def api-map
   {"read-edn-file" tttc/read-edn-file
    "write-edn-file" tttc/write-edn-file

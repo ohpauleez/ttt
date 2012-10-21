@@ -112,6 +112,8 @@
            (when flag {:default false})
            options)))
 
+;(def with-out-str prn)
+
 (defn cli
   "Parse the provided args using the given specs. Specs are vectors
   describing a command line argument. For example:
