@@ -2,6 +2,7 @@
   (:require [ttt.core :as core]
             [ttt.api :as api]
             [ttt.cli :as cli]
+            [ttt.search.core :as search]
             [goog.result :as result]))
 
 (defn ticket-arg-handler [args]
@@ -33,8 +34,10 @@
                                                           (core/scrub-ticket-args
                                                             (cli/into-arg [:id (core/id-str->int f-arg)]
                                                                           arg-map))))
-      (#{"st" "status"} f-arg) (println "status")
-      (re-find #"^\[.+\]" f-arg) (println "search")
+      (#{"st" "status"} f-arg) (prn (search/query-tickets [?x :where
+                                                              [?x :owner (:user.email git-map)
+                                                                  :current-state (str "^(?!" (-> (:ticket-states pref-file) last) "$)")]]))
+      (re-find #"^\[.+\]" f-arg) (prn (search/query-tickets (core/safe-read f-arg)))
       (= "__core__" f-arg) (prn (api/call-core-fn (cli/into-arg (rest extra-args)
                                                                 (dissoc arg-map :help))))
       :else (core/ticket-io! core/append-ticket
