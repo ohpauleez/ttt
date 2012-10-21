@@ -1,6 +1,6 @@
 git ttt __core__ process-git `git log -n1 --pretty=format:"%H %ae %s"`
 
 if  git diff --stat | grep tickets.edn ; then
-    git add `git root`/tickets.edn; git commit --ammend -C HEAD;
+    git add `git root`/tickets.edn; git commit --amend -C HEAD;
 fi
 
