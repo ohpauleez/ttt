@@ -1,5 +1,7 @@
 
-## Only run the hook if this isn't a rebase
+## The hook scans the most recent commit for ttt actions (using ttt's 'process-git')
+##   It then includes all tickets.edn updates and squashes the commits together.
+##   If this commit is part of a rebase, it is ignored (needed to correctly squash commits)
 if [[ ! -d "`git root`/.git/rebase-merge" ]] ; then
     git ttt __core__ process-git `git log -n1 --pretty=format:"%H %ae %s"`
 
@@ -7,7 +9,6 @@ if [[ ! -d "`git root`/.git/rebase-merge" ]] ; then
         git add `git root`/tickets.edn; git commit -m "[ttt] Tickets auto commit";
 
         export GIT_SEQUENCE_EDITOR="gsed -i '2s/pick/squash/;/# This is the 2nd commit message:/,$ {d}'"
-        #export EDITOR="gsed -i '2s/pick/squash/;/# This is the 2nd commit message:/,$ {d}'"
         export EDITOR=true
         
         git rebase -i HEAD~2 
