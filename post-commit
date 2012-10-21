@@ -1,6 +1,16 @@
-git ttt __core__ process-git `git log -n1 --pretty=format:"%H %ae %s"`
 
-if  git diff --stat | grep tickets.edn ; then
-    git add `git root`/tickets.edn; git commit -n --amend -C HEAD;
+## Only run the hook if this isn't a rebase
+if [[ ! -d "`git root`/.git/rebase-merge" ]] ; then
+    git ttt __core__ process-git `git log -n1 --pretty=format:"%H %ae %s"`
+
+    if  git diff --stat | grep tickets.edn ; then
+        git add `git root`/tickets.edn; git commit -m "[ttt] Tickets auto commit";
+
+        export GIT_SEQUENCE_EDITOR="gsed -i '2s/pick/squash/;/# This is the 2nd commit message:/,$ {d}'"
+        #export EDITOR="gsed -i '2s/pick/squash/;/# This is the 2nd commit message:/,$ {d}'"
+        export EDITOR=true
+        
+        git rebase -i HEAD~2 
+    fi
 fi
 
