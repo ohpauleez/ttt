@@ -75,13 +75,18 @@
     (keyword kw)
     kw))
 
-(extend-type js/String
-  s-protocols/ISearchable
+(extend-protocol s-protocols/ISearchable
+
+  js/String
   (search-compare [this compare-to]
     (if (keyword? this) ;; CLJS interns keywords as strings...
       (or (= this compare-to)
           (re-find (js/RegExp. (name this)) compare-to))
-      (re-find (js/RegExp. this) (name compare-to)))))
+      (re-find (js/RegExp. this) (name compare-to))))
+
+  js/RegExp
+  (search-compare [this compare-to]
+    (re-find this (name compare-to))))
 
 (defn query-tickets [query-vec]
   (let [query-vec (normalize-query-vec query-vec)
