@@ -327,6 +327,11 @@
          _ (unlock!)]
      res)))
 
+(defn str-ticket
+  "A basic single-line str for a ticket; suitable to print"
+  [t]
+  (str (:id t) " [" (:type t) " :: " (:points t) " points] - " (:summary t)))
+
 ;; Git interactions
 ;; -----------------
 ;;
