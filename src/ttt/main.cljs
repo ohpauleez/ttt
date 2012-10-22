@@ -27,20 +27,29 @@
     ;;  * st|status is a status lookup (for tickets, releases, progress, etc)
     ;;  * [...] is for searching/querying
     (cond
-      (or (and (empty? arg-map) (empty? extra-args))
-          (contains? arg-map :help)) (do (println usage) (core/exit))
+      (contains? arg-map :help) (do (println usage) (core/exit))
+      (and (re-find #":\d+" f-arg) (empty? arg-map)) (println (core/str-ticket-long
+                                                                (first (search/query-tickets
+                                                                         [?x :where
+                                                                             [?x :id (core/id-str->int f-arg)]]))))
       (re-find #":\d+" f-arg) (core/ticket-io! core/update-ticket
                                                    (apply hash-map
                                                           (core/scrub-ticket-args
                                                             (cli/into-arg [:id (core/id-str->int f-arg)]
                                                                           arg-map))))
-      (#{"st" "status"} f-arg) (doseq [t (search/query-tickets [?x :where
-                                                                   [?x :owner (:user.email git-map)
-                                                                       :current-state (str "^(?!" (-> (:ticket-states pref-file) last) "$)")]])]
+      (or (#{"st" "status"} f-arg)
+          (and (empty? arg-map) (empty? extra-args))) (doseq [t (search/query-tickets
+                                                                  [?x :where
+                                                                      [?x :owner (:user.email git-map)
+                                                                          :current-state (str "^(?!" (-> (:ticket-states pref-file) last) "$)")]])]
                                  (println (core/str-ticket t)))
       (re-find #"^\[.+\]" f-arg) (prn (search/query-tickets (core/safe-read f-arg)))
       (= "__core__" f-arg) (prn (api/call-core-fn (cli/into-arg (rest extra-args)
                                                                 (dissoc arg-map :help))))
+      (empty? arg-map) (doseq [t (search/query-tickets
+                                   [?x :where
+                                       [?x :summary f-arg]])]
+                         (println (core/str-ticket t)))
       :else (let [new-ticket (-> (core/ticket-io! core/append-ticket
                                               (apply core/make-ticket (cli/into-arg extra-args
                                                                                     (dissoc arg-map :help)))) :tickets last)]
