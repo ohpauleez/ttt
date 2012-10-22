@@ -340,13 +340,16 @@
                     (closed-state pref-file) "X "}]
     (str (get status-map (:current-state t) "> ") (:id t) " [" (:type t) " :: " (:points t) " points] - " (:summary t))))
 
+(def millis-per-day 86400000)
 (defn str-ticket-long
   "A full format ticket string; suitable to report on a single ticket"
   [t]
   (let [pref-file (pref-file!)
-        days-opened (-> (:states t) ((open-state pref-file)) (#(- (utc-millis) %)) (/ 86400000))
+        open? (-> (:states t) ((open-state pref-file)))
+        days-opened (or (and open? (-> open? (#(- (utc-millis) %)) (/ millis-per-day)))
+                        "N/A")
         work?  (-> (:history t) last :at)
-        days-since (or (and work? (-> work? (#(- (utc-millis) %)) (/ 86400000)))
+        days-since (or (and work? (-> work? (#(- (utc-millis) %)) (/ millis-per-day)))
                        days-opened)]
     (if t
       (str "Issue " (:id t) " - " (:summary t)
