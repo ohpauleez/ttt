@@ -50,7 +50,7 @@ Get selective - Select the id, type, and points of every open ticket where I'm t
 
 ### Notes:
  * When a release's tickets are all closed, a tag is created.  This can be toggled off in the configuration file.
- * Types are configurable in a file, along with the default type
+ * Ticket types are configurable in a file, along with the default type
  * Point scales are configurable in a file, along with the default
  * Point scales can be any list.  For example Fibonacci effort and project impact together `[0L 0M 0H 1L 1M ... 8L 8M 8H]`
  * Points internally are captured as unicode strings
@@ -63,7 +63,7 @@ Get selective - Select the id, type, and points of every open ticket where I'm t
  * Tickets that reference a release will result in an error being thrown
  * Tickets are owned by the last person who touches them (unless a pluging changes that behavior)
  * Everything in the data structure is timestamped with Unix Time // UTC
- * Releases are in the data structure (an EDN file, `.ttt/data.edn`)
+ * Releases are in the data structure (an EDN file, `tickets.edn`)
  * Releases are created with tickets via the `--release*=` or `-RR` option
  * Releases can be merged or made into "subprojects" if their `:name` points to another release keyword
  * Releases are deleted by editing the data file directly;  If a ticket is closed and its release is not there, it is ignored.
@@ -156,6 +156,10 @@ Searching through ttt
 ----------------------
 Searching is powered by core.logic.
 
+
+Screencasts
+------------
+ * TODO
 
 Questions
 ----------
