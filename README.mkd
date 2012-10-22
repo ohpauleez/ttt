@@ -157,11 +157,6 @@ Searching through ttt
 Searching is powered by core.logic.
 
 
-Screencasts
------------
- * TODO
-
-
 Questions
 ----------
 ### Wait...  won't there be conflicts all the time?
