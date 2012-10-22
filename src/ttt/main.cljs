@@ -34,16 +34,17 @@
                                                           (core/scrub-ticket-args
                                                             (cli/into-arg [:id (core/id-str->int f-arg)]
                                                                           arg-map))))
-      (#{"st" "status"} f-arg) (prn (search/query-tickets [?x :where
-                                                              [?x :owner (:user.email git-map)
-                                                                  :current-state (str "^(?!" (-> (:ticket-states pref-file) last) "$)")]]))
+      (#{"st" "status"} f-arg) (doseq [t (search/query-tickets [?x :where
+                                                                   [?x :owner (:user.email git-map)
+                                                                       :current-state (str "^(?!" (-> (:ticket-states pref-file) last) "$)")]])]
+                                 (println (core/str-ticket t)))
       (re-find #"^\[.+\]" f-arg) (prn (search/query-tickets (core/safe-read f-arg)))
       (= "__core__" f-arg) (prn (api/call-core-fn (cli/into-arg (rest extra-args)
                                                                 (dissoc arg-map :help))))
       :else (let [new-ticket (-> (core/ticket-io! core/append-ticket
                                               (apply core/make-ticket (cli/into-arg extra-args
                                                                                     (dissoc arg-map :help)))) :tickets last)]
-              (println "Created:" (:id new-ticket) (str "[" (:type new-ticket)) "::" (:points new-ticket) "points] -" (:summary new-ticket))))
+              (println "Created:" (core/str-ticket new-ticket))))
     (core/exit)))
 
 (defn -main [& args]
