@@ -13,7 +13,7 @@
    (or docs "")])
 
 (defn- banner-for [specs]
-  (prn "Usage:\n")
+  (*print-fn* "Usage:\n")
   (let [docs (into (map build-doc specs)
                    [["--------" "-------" "----"]
                     ["Switches" "Default" "Desc"]])
@@ -23,7 +23,7 @@
         vs (for [d docs]
              (mapcat (fn [& x] (apply vector x)) max-cols d))]
     (doseq [v vs]
-      (prn v))))
+      (*print-fn* v))))
 
 (defn- name-for [k]
   (cstr/replace k #"^--no-|^--\[no-\]|^--|^-" ""))

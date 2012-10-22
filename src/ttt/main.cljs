@@ -27,8 +27,8 @@
     ;;  * st|status is a status lookup (for tickets, releases, progress, etc)
     ;;  * [...] is for searching/querying
     (cond
-      (and (empty? arg-map) (empty? extra-args)) (println usage)
-      (:help arg-map) (println usage)
+      (or (and (empty? arg-map) (empty? extra-args))
+          (contains? arg-map :help)) (do (println usage) (core/exit))
       (re-find #":\d+" f-arg) (core/ticket-io! core/update-ticket
                                                    (apply hash-map
                                                           (core/scrub-ticket-args
@@ -40,9 +40,10 @@
       (re-find #"^\[.+\]" f-arg) (prn (search/query-tickets (core/safe-read f-arg)))
       (= "__core__" f-arg) (prn (api/call-core-fn (cli/into-arg (rest extra-args)
                                                                 (dissoc arg-map :help))))
-      :else (core/ticket-io! core/append-ticket
-                     (apply core/make-ticket (cli/into-arg extra-args
-                                                           (dissoc arg-map :help)))))
+      :else (let [new-ticket (-> (core/ticket-io! core/append-ticket
+                                              (apply core/make-ticket (cli/into-arg extra-args
+                                                                                    (dissoc arg-map :help)))) :tickets last)]
+              (println "Created:" (:id new-ticket) (str "[" (:type new-ticket)) "::" (:points new-ticket) "points] -" (:summary new-ticket))))
     (core/exit)))
 
 (defn -main [& args]
