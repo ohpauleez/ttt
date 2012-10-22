@@ -327,10 +327,40 @@
          _ (unlock!)]
      res)))
 
+(defn open-state [pref-file]
+  (-> (:ticket-states pref-file) first keyword))
+(defn closed-state [pref-file]
+  (-> (:ticket-states pref-file) last keyword))
+
 (defn str-ticket
   "A basic single-line str for a ticket; suitable to print"
   [t]
-  (str (:id t) " [" (:type t) " :: " (:points t) " points] - " (:summary t)))
+  (let [pref-file (pref-file!)
+        status-map {(open-state pref-file) "_ "
+                    (closed-state pref-file) "X "}]
+    (str (get status-map (:current-state t) "> ") (:id t) " [" (:type t) " :: " (:points t) " points] - " (:summary t))))
+
+(defn str-ticket-long
+  "A full format ticket string; suitable to report on a single ticket"
+  [t]
+  (let [pref-file (pref-file!)
+        days-opened (-> (:states t) ((open-state pref-file)) (#(- (utc-millis) %)) (/ 86400000))
+        work?  (-> (:history t) last :at)
+        days-since (or (and work? (-> work? (#(- (utc-millis) %)) (/ 86400000)))
+                       days-opened)]
+    (if t
+      (str "Issue " (:id t) " - " (:summary t)
+           "\n------------------------"
+           "\n Description: " (:description t)
+           "\n Type: " (:type t)
+           "\n Status: " (:current-state t)
+           "\n Points: " (:points t)
+           "\n Reported by: " (:reported-by t) " - " days-opened " day(s) ago"
+           "\n Owned by: " (:owner t)
+           "\n Last activity: " days-since " day(s) ago"
+           "\n On branch: " (:branch t)
+           "\n Release: " (:release t))
+      "Could not locate that ticket")))
 
 ;; Git interactions
 ;; -----------------
