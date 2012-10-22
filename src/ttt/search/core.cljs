@@ -71,7 +71,7 @@
 ;; via a protocol, ISearchable, that defines a `search-compare`
 
 (defn ensure-kw [kw]
-  (if (and (= ":" (first kw)) (not (keyword? kw)))
+  (if (and (string? kw) (= ":" (first kw)) (not (keyword? kw)))
     (keyword kw)
     kw))
 
@@ -86,7 +86,11 @@
 
   js/RegExp
   (search-compare [this compare-to]
-    (re-find this (name compare-to))))
+    (re-find this (name compare-to)))
+
+  js/Number
+  (search-compare [this compare-to]
+    (= this compare-to)))
 
 (defn query-tickets [query-vec]
   (let [query-vec (normalize-query-vec query-vec)
