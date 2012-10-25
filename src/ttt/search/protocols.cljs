@@ -1,5 +1,5 @@
 (ns ttt.search.protocols)
 
 (defprotocol ISearchable
-  (search-compare [this compare-to]))
+  (-search-compare [this compare-to]))
 
