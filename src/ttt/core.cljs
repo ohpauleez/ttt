@@ -135,7 +135,7 @@
     ret))
 
 (defn blocking-deref
-  "Given atom and a Result object, attempt to cycle the process tick on derefing until `pred-fn` isn't true
+  "Given an atom and a Result object, attempt to cycle the process tick on derefing until `pred-fn` isn't true
   By default, `pred-fn` is nil?
   Once the condition doesn't hold, the Result will be set to @a, and @a is returned"
   ([a r]
@@ -164,9 +164,6 @@
       (git-root)
       (blocking-deref res))
     res))
-
-;; Last commit message: git log -n1 --pretty=format:%s
-;; Last commit hash: git rev-parse HEAD
 
 ;; Lock file I/O
 ;; --------------
@@ -279,15 +276,9 @@
     (inc-state ticket)
     ticket))
 
-;(defn id-kw->pos
-;  "Given a ticket's id keyword [ie :1], return its supposed position
-;  DO NOT USE THIS
-;  This is here only for historical reasons.  Ticket IDs are integer based"
-;  [id-kw]
-;  (-> id-kw name js/parseInt dec))
-
 (defn id->pos
-  "Given a ticket's integer ID, return its supposed position in the ticket vector"
+  "Given a ticket's integer ID, return its supposed position in the ticket vector
+  This is naive, but gets the job done."
   [id-int]
   (dec id-int))
 
@@ -305,18 +296,21 @@
     ;; We may have some hooks here, if not TODO remove the `let`
     ticket))
 
-(defn append-ticket [t-file-map ticket]
+(defn append-ticket
+  "Append a given ticket to the ticket vector/collection"
+  [t-file-map ticket]
   (update-in t-file-map [:tickets] conj (assoc ticket
                                                :id (-> t-file-map :tickets count inc))))
 
 (defn update-ticket
-  "This ticket needs to have the :id key in it already"
+  "Update a ticket within the ticket vector/collection.
+  The ticket passed must already have an :id"
   [t-file-map ticket]
   (update-in t-file-map [:tickets (-> ticket :id id->pos)] merge ticket))
 
 (defn ticket-io!
   "This applies a function to the actual ticket file.
-  All functions should take two args: the ticket file map, and a ticket.
+  All functions should take two args: the ticket file map and a ticket.
   You should never lock the ticket file by hand, use this function."
   ([f ticket]
    (ticket-io! f ticket default-ticket-path))
@@ -327,6 +321,10 @@
          _ (unlock!)]
      res)))
 
+;; Ticket formatting and printing
+;; ------------------------------
+
+;; Create a short hand to determine the opening and closing state of a ticket
 (defn open-state [pref-file]
   (-> (:ticket-states pref-file) first keyword))
 (defn closed-state [pref-file]
@@ -369,7 +367,7 @@
 ;; -----------------
 ;;
 ;; Here are the auxiliary functions for various git hooks and interactions.
-;; These are responsible automatically pushing a ticket through its states
+;; These are responsible for automatically pushing a ticket through its states
 ;; based on git usage.
 
 (defn process-work
@@ -388,7 +386,11 @@
           ticket))
       ticket)))
 
-(defn parse-git-message [message-str]
+(defn parse-git-message
+  "Given a commit message of the form: 'this is my commit [...]'
+  break it apart into a map of aossciated ticket ids, potential ttt commands,
+  and the raw commit message itself"
+  [message-str]
   (if-let [hook-str (re-find #"\[.+]$" message-str)]
     (let [hook-sans-br (cstr/replace hook-str #"\[|\]" "")
           parts (cstr/split hook-sans-br #"\s")
@@ -396,7 +398,11 @@
           ticket-ids (map id-str->int (filter #(= \:  (get % 0)) parts))]
       {:ids ticket-ids :maybe-command command :message message-str})))
 
-(defn process-git [git-hash email & message-pieces]
+(defn process-git
+  "This is the entry point for processing git feedback.
+  It takes a commit hash, the author email, and any chunks of the message.
+  These are most easily obtained with: `git log -n1 --pretty=format:'%H %ae %s'`"
+  [git-hash email & message-pieces]
   (let [message-map (parse-git-message (cstr/join " " message-pieces))
         command (:maybe-command message-map)
         tickets (:tickets (ticket-file!))]
