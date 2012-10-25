@@ -134,6 +134,10 @@ And set your local post-commit git hook to:
 
      `git root`/ttt __core__ process-git `git log -n1 --pretty=format:"%H %ae %s"` 
 
+- - -
+
+A more advanced post-commit hook can be found in this project.  It will automerge and maintain the ticket file for you.
+
 Plugins
 ---------
 ### Project, team, and git metrics
@@ -174,8 +178,8 @@ A lock file is used to ensure that only one edit can happen at a time.  When the
 If the lock file is mistakenly there, you can just `rm .tttlock`
 
 ### Why aren't ticket IDs proper keywords?
-There's currently a bug in the ClojureScript reader that prevents it from reading keywords where the leading character is an integer.
-To manuver around this, the current choice is to make all IDs integers.  In the future, this may change, but all calling semantics will be the same.
+Keywords cannot start with an integer.  Rather than introduce a project prefix to all tickets, the current choice is to make all IDs integers.
+In the future, this may change (perhaps via a plugin to introduce project-level controls), but all calling semantics will be the same.
 
 
 Extending ttt; writing plugins
