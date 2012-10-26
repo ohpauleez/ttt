@@ -16,7 +16,7 @@ Ironically, one of the best times to collect metrics and keep track of everythin
 `ttt` is an exploration into the idea that our tools should work automatically (in-band), based on the context and data exhaust that exists within our daily operations.
 
 **This code will most likely not run for you in its current state.** It is built against my own custom version of the ClojureScript code base and Closure Lib.
-However, the single `example-ttt` file should run for you.
+However, the single `ttt-example` file should run for you.
 
 Here's the idea, `git ttt`
 ===========================
