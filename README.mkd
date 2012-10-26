@@ -1,3 +1,23 @@
+Caution - this is a work in progress
+====================================
+
+I built this app to tease out ClojureScript's scripting story while building a useful application.
+
+Specifically, if you're going to write small apps in CLJS+Node.js - YOU NEED TO USE PROMISES! (See Google Closure's Result lib)
+
+Promises let you escape from callback hell, handle real exceptions, structure your code like you normally would in Clojure, and program with values.
+
+## The rational behind ttt
+It seems that the moment an engineering team becomes constrained, all out-of-band tools and processes get dropped.
+
+One of those processes, ticket tracking, conveys a lot of information about the team and project, and serves as a fundamental mode of async communication.
+Ironically, one of the best times to collect metrics and keep track of everything is during "crunch-time."
+
+`ttt` is an exploration into the idea that our tools should work autonmatically (in-band), based on the context and data exhaust that exists within our daily operations.
+
+**This code will most likely not run for you in its current state.** It is built against my own custom version of the ClojureScript code base and Closure Lib.
+However, the single `example-ttt` file should run for you.
+
 Here's the idea, `git ttt`
 ===========================
 
