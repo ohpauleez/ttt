@@ -18,7 +18,7 @@ Ironically, one of the best times to collect metrics and keep track of everythin
 Not all of the functionality is present - namely releases, `resolve`, and I'm re-writing search/query with core.logic
 
 **This code will most likely not run for you in its current state.** It is built against my own custom version of the ClojureScript code base and Closure Lib.
-However, the single `ttt-example` file should run for you.
+However, the single `ttt-example` file should run for you.  You can also see it running in the [intro screencast](http://www.pauldee.org/TTT-Intro.mov)
 
 Here's the idea, `git ttt`
 ===========================
