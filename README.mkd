@@ -15,6 +15,8 @@ Ironically, one of the best times to collect metrics and keep track of everythin
 
 `ttt` is an exploration into the idea that our tools should work automatically (in-band), based on the context and data exhaust that exists within our daily operations.
 
+Not all of the functionality is present - namely releases, `resolve`, and I'm re-writing search/query with core.logic
+
 **This code will most likely not run for you in its current state.** It is built against my own custom version of the ClojureScript code base and Closure Lib.
 However, the single `ttt-example` file should run for you.
 
@@ -113,11 +115,11 @@ Get selective - Select the id, type, and points of every open ticket where I'm t
 ```clojure
 {
     :releases {
-        :0.1 {:name "0.1", :created TIMESTAMP, :completed nil}
-        :0.1-mistake {:name :0.1 :created TIMESTAMP, :completed nil
+        :r0.1 {:name "0.1", :created TIMESTAMP, :completed nil}
+        :r0.1-mistake {:name :r0.1 :created TIMESTAMP, :completed nil
     }
     :tickets [
-        {:id :3
+        {:id 3
          :summary "One more ticket"
          :description ""
          :reported-by "email from .gitconfig"
@@ -135,9 +137,9 @@ Get selective - Select the id, type, and points of every open ticket where I'm t
                :at TIMESTAMP
              },
          ]
-         :sub :2
+         :sub 2
          :branch "branch name of the last in-progress commit"
-         :release :0.1
+         :release "0.1"
         }
     ]
 }
@@ -177,7 +179,7 @@ TODO
 ### Ticket state hooks
 TODO
 
-### Saved aearches
+### Saved searches
 TODO - just adds a new map to the data structure `{:searches { "email from .gitconfig" {:tag "query", ...}}}`
 
 ### Document/Report generation
